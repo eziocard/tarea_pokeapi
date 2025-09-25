@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import Card from "./components/Card";
 import Input from "./components/Input";
-interface CardBrief {
+import Table from "./components/Table";
+export interface CardBrief {
   id: string;
   localId: string;
   name: string;
   image: string;
 }
 function App() {
+  const [accion,setAccion] = useState(false);
   const [data, setData] = useState<CardBrief[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -16,7 +18,8 @@ function App() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(url);
+        const url10 = `${url}?pagination:page=1&pagination:itemsPerPage=10`;
+        const response = await fetch(url10);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -30,8 +33,9 @@ function App() {
     }
     fetchData();
   }, []);
+console.log(data)
 
-  console.log(data);
+
   const cardsToShow = loading
     ? Array.from({ length: 10 }, (_, i) => ({
         id: i,
@@ -44,17 +48,20 @@ function App() {
       <main>
         <header id="buscador">
           <h1>Cartas Pokemon :)</h1>
-          <Input />
+          <Input onClick={() => setAccion(!accion)}/>
         </header>
+        
         <section id="contenedor">
-          {cardsToShow?.map((e) => (
-            <Card
-              key={e.id}
-              nombre={e.name}
-              img={e.image || "https://via.placeholder.com/150"} // placeholder si no hay imagen
-            />
-          ))}
+          {accion && data ? (
+            <Table datos={data} />
+          ) : (
+            cardsToShow?.map((e) => (
+              <Card key={e.id} nombre={e.name} img={e.image} />
+            ))
+          )}
         </section>
+
+
       </main>
     </>
   );
