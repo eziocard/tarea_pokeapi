@@ -1,0 +1,17 @@
+<main>
+        <header id="buscador">
+          <h1>Cartas Pokemon :)</h1>
+          <Input placeholder="Buscar Carta en especifico" />
+          <button onClick={() => setAccion(!accion)}>Mostrar como tabla</button>
+        </header>
+
+        <section id="contenedor">
+          {accion && data ? (
+            <Table datos={data} />
+          ) : (
+            cardsToShow?.map((e) => (
+              <Card key={e.id} nombre={e.name} img={e.image} />
+            ))
+          )}
+        </section>
+      </main>

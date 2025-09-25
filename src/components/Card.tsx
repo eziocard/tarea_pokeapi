@@ -1,22 +1,23 @@
 type Props = {
   nombre?: string;
-  descripcion?: string;
   img?: string;
 };
-function Card({ nombre, descripcion, img }: Props) {
+function Card({ nombre, img }: Props) {
   return (
-    <div className="card" style={{ width: "18rem" }}>
-      <img
-        className="card-img-top"
-        src={img + "/low.png"}
-        alt="Card image cap"
-      />
+    <div className="card" style={{ width: "18rem", margin: "10px" }}>
+      {img ? (
+        <img
+          className="card-img-top"
+          src={img + "/low.png"}
+          alt={nombre || "Card image"}
+        />
+      ) : (
+        <h3 style={{ textAlign: "center", padding: "20px" }}>
+          No existe una imagen
+        </h3>
+      )}
       <div className="card-body">
-        <h5 className="card-title">{nombre}</h5>
-        <p className="card-text">{descripcion}</p>
-        <a href="#" className="btn btn-primary">
-          Ver
-        </a>
+        <h5 className="card-title">{nombre || "Sin nombre"}</h5>
       </div>
     </div>
   );
