@@ -5,24 +5,42 @@ import Input from "./components/Input";
 import Table from "./components/Table";
 import useGetPokemon from "./hooks/useGetPokemon";
 import { Modal } from "react-bootstrap";
+import useGetInfoPokemon from "./hooks/useGetInfoPokemon";
 export interface PokemonData {
   id: string;
   localId: string;
   name: string;
   image: string;
 }
+export interface PokemonInfo {
+  id: string;
+  name: string;
+  image: string;
+  hp: number;
+  types: string[];
+  stage: string;
+  evolveFrom?: string;
+  rarity: string;
+}
+
 function App() {
   const [accion, setAccion] = useState(false);
   const [data, setData] = useState<PokemonData[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [, setError] = useState<Error | null>(null);
   const { BuscarPokemon } = useGetPokemon();
+  const { BuscarInfo } = useGetInfoPokemon();
   const [Pokemon, setPokemon] = useState<PokemonData>();
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = (dataPokemon: PokemonData) => {
+  const [showCard, setshowCard] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [InfoPokemon, setInfoPokemon] = useState<PokemonInfo | null>(null);
+
+  const handleCloseInfo = () => setShowInfo(false);
+
+  const handleCloseCard = () => setshowCard(false);
+  const handleshowCard = (dataPokemon: PokemonData) => {
     setPokemon(dataPokemon);
-    setShow(true);
+    setshowCard(true);
   };
 
   const url = "https://api.tcgdex.net/v2/en/cards";
@@ -44,7 +62,16 @@ function App() {
     }
     fetchData();
   }, []);
-
+  const handleShowInfo = async (id: PokemonData["id"]) => {
+    const resultados = await BuscarInfo(id);
+    console.log("Resultados de la busqueda:", resultados);
+    if (resultados) {
+      setInfoPokemon(resultados);
+      setShowInfo(true);
+    } else {
+      setInfoPokemon(null);
+    }
+  };
   const handleBusqueda = async (nombre: string) => {
     if (nombre == "") {
       setData([]);
@@ -78,17 +105,30 @@ function App() {
         </div>
       </header>
       <main>
-        <button onClick={() => setAccion(!accion)}> Mostrar Como Tabla</button>
+        <button onClick={() => setAccion(!accion)}>
+          {!accion ? "Mostrar Como Tabla" : "Mostrar Como Carta"}
+        </button>
         <section id="visualizador">
           {accion && data ? (
             <>
-              <Table datos={data} onClick={handleShow} />
-              <Modal show={show} onHide={handleClose}>
+              <Table
+                datos={data}
+                onClick={handleshowCard}
+                handleDetalle={handleShowInfo}
+              />
+              <Modal show={showCard} onHide={handleCloseCard}>
                 <Card
                   key={Pokemon?.id}
                   nombre={Pokemon?.name}
                   img={Pokemon?.image}
                 />
+              </Modal>
+              <Modal show={showInfo} onHide={handleCloseInfo}>
+                <h1>{InfoPokemon?.name}</h1>
+                <p>Puntos de Vida: {InfoPokemon?.hp}</p>
+                <p>Raresa: {InfoPokemon?.rarity}</p>
+                <p>Evolucion: {InfoPokemon?.stage}</p>
+                <p>Tipo: {InfoPokemon?.types}</p>
               </Modal>
             </>
           ) : loading ? (

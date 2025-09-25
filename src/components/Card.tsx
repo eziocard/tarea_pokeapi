@@ -16,9 +16,6 @@ function Card({ nombre, img }: Props) {
           No existe una imagen
         </h3>
       )}
-      <div className="card-body">
-        <h5 className="card-title">{nombre || "Sin nombre"}</h5>
-      </div>
     </div>
   );
 }

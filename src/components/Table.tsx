@@ -3,9 +3,10 @@ import type { PokemonData } from "../App";
 type Props = {
   datos: PokemonData[];
   onClick: (dataPokemon: PokemonData) => void;
+  handleDetalle: (dataPokemon: PokemonData["id"]) => void;
 };
 
-function Table({ datos, onClick }: Props) {
+function Table({ datos, onClick, handleDetalle }: Props) {
   if (!datos || datos.length === 0) {
     return <p>No hay datos</p>;
   }
@@ -15,8 +16,8 @@ function Table({ datos, onClick }: Props) {
         <tr>
           <th scope="col">Id</th>
           <th scope="col">Nombre</th>
-
-          <th scope="col">Img</th>
+          <th scope="col">Img Ruta</th>
+          <th scope="col">Detalle</th>
           <th scope="col">Ver</th>
         </tr>
       </thead>
@@ -28,7 +29,10 @@ function Table({ datos, onClick }: Props) {
 
             <td>{e.image}</td>
             <td>
-              <button onClick={() => onClick(e)}>ver</button>
+              <button onClick={() => handleDetalle(e.id)}>Ver Detalle</button>
+            </td>
+            <td>
+              <button onClick={() => onClick(e)}>Ver Carta</button>
             </td>
           </tr>
         ))}
