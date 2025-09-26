@@ -34,13 +34,21 @@ function App() {
   const [showCard, setshowCard] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [InfoPokemon, setInfoPokemon] = useState<PokemonInfo | null>(null);
-
+  const [isEmpty, setIsEmpty] = useState(false);
   const handleCloseInfo = () => setShowInfo(false);
 
-  const handleCloseCard = () => setshowCard(false);
+  const handleCloseCard = () => {
+    setshowCard(false);
+    setIsEmpty(false);
+  };
   const handleshowCard = (dataPokemon: PokemonData) => {
-    setPokemon(dataPokemon);
-    setshowCard(true);
+    if (dataPokemon.image) {
+      setPokemon(dataPokemon);
+      setshowCard(true);
+    } else {
+      setIsEmpty(true);
+      setshowCard(true);
+    }
   };
 
   const url = "https://api.tcgdex.net/v2/en/cards";
@@ -70,6 +78,7 @@ function App() {
       setShowInfo(true);
     } else {
       setInfoPokemon(null);
+      setShowInfo(true);
     }
   };
   const handleBusqueda = async (nombre: string) => {
@@ -117,24 +126,38 @@ function App() {
                 handleDetalle={handleShowInfo}
               />
               <Modal show={showCard} onHide={handleCloseCard}>
-                <Card
-                  key={Pokemon?.id}
-                  nombre={Pokemon?.name}
-                  img={Pokemon?.image}
-                />
+                {isEmpty ? (
+                  <p>No existe una imagen</p>
+                ) : (
+                  <Card
+                    key={Pokemon?.id}
+                    nombre={Pokemon?.name}
+                    img={Pokemon?.image}
+                  />
+                )}
               </Modal>
               <Modal show={showInfo} onHide={handleCloseInfo}>
-                <h1>{InfoPokemon?.name}</h1>
-                <p>Puntos de Vida: {InfoPokemon?.hp}</p>
-                <p>Raresa: {InfoPokemon?.rarity}</p>
-                <p>Evolucion: {InfoPokemon?.stage}</p>
-                <p>Tipo: {InfoPokemon?.types}</p>
+                {InfoPokemon ? (
+                  <>
+                    <h1>{InfoPokemon?.name}</h1>
+                    <p>Puntos de Vida: {InfoPokemon?.hp}</p>
+                    <p>Raresa: {InfoPokemon?.rarity}</p>
+                    <p>Evolucion: {InfoPokemon?.stage}</p>
+                    <p>Tipo: {InfoPokemon?.types.join(", ")}</p>
+                  </>
+                ) : (
+                  <>
+                    <p> No hay Informacion del Pokemon</p>
+                  </>
+                )}
               </Modal>
             </>
           ) : loading ? (
             cards?.map((e) => <Card key={e.id} nombre={e.name} img={e.image} />)
-          ) : data && data.length === 0 ? (
+          ) : !data || data.length === 0 ? (
             <p>No se encontraron resultados</p>
+          ) : cards && cards.length === 0 ? (
+            <p>No hay imágenes disponibles</p>
           ) : (
             cards?.map((e) => <Card key={e.id} nombre={e.name} img={e.image} />)
           )}
