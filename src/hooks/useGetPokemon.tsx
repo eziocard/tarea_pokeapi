@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { PokemonData } from "../App";
 
 function useGetPokemon() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   async function BuscarPokemon(nombre: string): Promise<PokemonData[] | null> {
